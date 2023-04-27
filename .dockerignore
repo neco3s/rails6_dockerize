@@ -4,3 +4,4 @@
 **/.gitkeep
 **/Dockerfile
 docker-compose.yml
+public/packs
