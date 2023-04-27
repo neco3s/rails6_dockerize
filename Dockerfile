@@ -2,7 +2,7 @@ FROM node:16.20.0-bullseye as node
 # 上記のnodeは最終的なイメージには保存されない
 
 
-FROM ruby:3.0
+FROM ruby:3.1.2
 # Install Node.js and Yarn、nodeイメージがcreateされstartしてbashで入った際に以下のフォルダーが確認できた
 # /opt/yarn-* , /usr/local/bin/node , /usr/local/lib/node_modules/
 # 以下の記述はnodeコンテナで生成されたフォルダーをrubyコンテナにコピーしている
