@@ -1,6 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  # docker-composeで割り当てられたhostname(db)に変更
   host: db
   user: postgres
   port: 5432
