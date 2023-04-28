@@ -5,3 +5,7 @@
 **/Dockerfile
 docker-compose.yml
 public/packs
+log/*
+tmp/*
+vendor/bundle
+node_modules
