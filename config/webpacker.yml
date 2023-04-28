@@ -54,10 +54,10 @@ development:
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
     https: false
-    host: localhost
+    host: localhost #docker-compose.ymlのenvironment: WEBPACKER_DEV_SERVER_HOST: host名 で上書きされる。
     port: 3035
-    public: localhost:3035
-    hmr: false
+    public: localhost:3035 #ここでのlocalhostはdev_server: host: で指定したホスト名を指す
+    hmr: true
     # Inline should be set to true if using HMR
     inline: true
     overlay: true

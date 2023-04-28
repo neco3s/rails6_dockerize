@@ -1,0 +1,11 @@
+.env
+.git
+.gitignore
+**/.gitkeep
+**/Dockerfile
+docker-compose.yml
+public/packs
+log/*
+tmp/*
+vendor/bundle
+node_modules
