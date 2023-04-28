@@ -1,5 +1,8 @@
 version: '3'
 
+# 名前つきボリュームを定義します
+# ボリュームはデータを永続化するための機能
+# コンテナ上で生成されたファイルはコンテナのライフサイクルと共に消えてしまう。ボリュームはコンテナのライフサイクルとは独立してファイルの管理を行います。
 volumes:
   db-data:
     driver: local #driverはAmazon EBS のような外部のストレージ・システムと統合した環境に Docker をデプロイできるようにする際に詳細に設定する
@@ -8,25 +11,31 @@ volumes:
 
 services:
   web:
+    # Dockerfileを使ってbuildします。build contextにはdocker-composeが実行された際のカレントディレクトリを渡します
     build: .
     volumes:
+      # ホスト上のカレントディレクトリ(.)の内容をコンテナ上の/myappに割り当てます(バインドマウント)
       - '.:/myapp'
+      # コンテナ上のgemインストール先(/usr/local/bundle)をbuldleという名前でボリュームに割り当てますs
       - bundle:/usr/local/bundle
+    # コンテナ稼働時に実行されるコマンドです
+    # RUN -> volumes(マウント) ->CMD
     command: /bin/sh -c "rm -f tmp/pids/server.pid && rails db:create && rails db:migrate && rails s -p 3000 -b '0.0.0.0'"
+    # 'ホスト側:コンテナ側'のポートを3000でマッピングしています
     ports:
       - '3000:3000'
     environment:
+      # DB_PASSWORDに.envのDB_PASSWORD のバリューを格納してwebホスト上の環境変数として使用できるようにしています
       - 'DB_PASSWORD=${DB_PASSWORD}'
+      # WEBPACKER_DEV_SERVER_HOSTでdev-serverの接続先を指定しています
       - 'WEBPACKER_DEV_SERVER_HOST=webpacker'
+    # 擬似端末(キーボードによる入力)をコンテナに結びつけます(docker run -itの-tと同じ意味)
     tty: true
+    # 標準入出力とエラー出力をコンテナに結びつけます(docker run -itの-iと同じ意味)
     stdin_open: true
+    # dbコンテナが起動してからwebを起動します
     depends_on:
       - db
-    links:
-      - db
-    networks:
-      - internal
-      - external
 
   webpacker:
     build: .
@@ -35,11 +44,9 @@ services:
       - bundle:/usr/local/bundle
     command: ./bin/webpack-dev-server
     environment:
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0 #webpackerと同意
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0 #webpackerホスト名を指している
     ports:
       - "3035:3035"
-    networks:
-      - internal
 
   db:
     image: postgres:12
@@ -48,11 +55,3 @@ services:
     environment:
       - 'POSTGRES_USER=${POSTGRES_USER}'
       - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
-    networks:
-      - internal
-
-networks:
-  internal:
-    internal: true
-  external:
-    name: web_network
